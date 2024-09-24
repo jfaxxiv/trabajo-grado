@@ -1,5 +1,5 @@
 import React from "react";
-import { auth } from "../firebase/config";
+import { auth,db } from "../firebase/config";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -7,6 +7,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
+import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 
 const UserContext = React.createContext();
 
@@ -44,17 +45,6 @@ function UserProvider({ children }) {
     if (password === confirmPassword) {
       setRegisterSucces(true);
       createUserWithEmailAndPassword(auth, email, password);
-      // .then((userCredential) => {
-      //     // Signed in
-      //     const user = userCredential.user
-
-      //     // ...
-      // })
-      // .catch((error) => {
-      //     const errorCode = error.code;
-      //     const errorMessage = error.message;
-      //     // ..
-      // });
     } else {
       setWarning("Las contraseñas no coinciden");
     }
@@ -72,9 +62,25 @@ function UserProvider({ children }) {
         setWarning("No se encontro el Usuario");
       });
   };
+
+  //cerrar sesion
   const logOut = () => {
     auth.signOut();
   };
+
+  //hacer copia de usuario
+  const copyUser = async () => {
+    try {
+      const collectionRef = collection(db, "usuarios");
+      const docRef = doc(collectionRef, `${userConfirm.uid}`);
+      await setDoc(docRef, {
+        email: userConfirm.email,
+      });
+    } catch (e) {
+      console.error("Error al guardar el documento: ", e);
+    }
+  };
+
 
   return (
     <UserContext.Provider
@@ -97,6 +103,7 @@ function UserProvider({ children }) {
         registerSucces,
         setRegisterSucces,
         logOut,
+        copyUser,
       }}
     >
       {children}
