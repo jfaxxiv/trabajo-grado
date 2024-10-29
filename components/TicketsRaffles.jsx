@@ -8,6 +8,7 @@ import {
   Alert,
   Button,
   Dimensions,
+  Image,
 } from "react-native";
 import { db } from "../firebase/config";
 import { useLocalSearchParams } from "expo-router";
@@ -121,7 +122,7 @@ function TicketsRaffles() {
       selectedButtonId === content.id ? styles.selectedButton : null,
     ]}
       onPress={() => {
-        Alert.alert("hi");
+        Alert.alert("Seleccionado");
         //getTickets(content.id);
        // handlePress(content.id);
         selectTickets(content.id)
@@ -159,7 +160,16 @@ function TicketsRaffles() {
         }}
       />
 
-      <Text style={styles.title}>Premio</Text>
+      <View style={styles.header}>
+        
+        <Text style={styles.title}>{raffleData.premio}</Text>
+        <Image
+          source={{uri: raffleData.imageUrl}}
+          style={{ width: 150, height: 110 }} 
+        />
+
+      </View>
+      
 
       <View style={styles.listContainer}>
         <FlatList 
@@ -194,13 +204,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#2DA5F7",
   },
   title: {
-    fontSize: 60,
+    fontSize: 40,
     textAlign: "center",
     fontWeight: "bold",
-    color:"#fff"
+    color:"#fff",
+    textDecorationLine:"underline"
   },
   listContainer:{
-    height:500
+    height:500,
+    marginTop:5
   },
   item_button: {
     margin: 10,
@@ -251,5 +263,11 @@ const styles = StyleSheet.create({
     fontSize: 28,
     //fontFamily:"grand-casino"
   },
+
+  header:{
+    display:"flex",
+    flexDirection:"row",
+    justifyContent:"space-around"
+  }
 });
 export { TicketsRaffles };

@@ -6,6 +6,9 @@ import {
   addDoc,
   Timestamp,
   getDoc,
+  getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import { db, storage } from "../firebase/config";
 import { UserContext } from "./UserContext";
@@ -24,8 +27,9 @@ function RaffleProvaider({ children }) {
   const [price, setPrice] = React.useState(0);
   const [image, setImage] = React.useState(null);
   const [uploading, setUploading] = React.useState(false);
-  // const [scrapedData, setScrapedData] = React.useState([]);
-  // const [htmlContent, setHtmlContent] = React.useState('');
+  const [rule, setRule] = React.useState("")
+  const [searchParam, setSearchParam] = React.useState("")
+  const [rafflesFound, setRafflesFound] = React.useState([])
 
   const defTitle = (text) => {
     setTitle(text);
@@ -42,6 +46,9 @@ function RaffleProvaider({ children }) {
   const defPrice = (num) => {
     setPrice(Number(num));
   };
+  const defSearchParam = (text) => {
+    setSearchParam(text)
+  }
 
   const [lista, setLista] = React.useState([]);
   React.useEffect(() => {
@@ -50,7 +57,7 @@ function RaffleProvaider({ children }) {
       const numero = i.toString().padStart(2, "0");
       numeros.push(numero);
     }
-    // Actualizamos el estado con la lista generada
+    
     setLista(numeros);
   }, []);
 
@@ -102,6 +109,7 @@ function RaffleProvaider({ children }) {
       precio: price,
       usuario: userConfirm.uid,
       imageUrl: imageUrl,
+      regla:rule,
       fechaCreacion: Timestamp.now(),
     };
 
@@ -118,6 +126,25 @@ function RaffleProvaider({ children }) {
 
     setUploading(false);
   };
+
+  const search = async () => {
+    try {
+      const raffleRef = collection(db,"raffles")
+      const q = query(raffleRef,where("titulo","==",searchParam))
+      const querySnapshot = await getDocs(q)
+      const foundRaffles = []
+      querySnapshot.forEach((doc)=>{
+        foundRaffles.push({
+          id: doc.id,
+          ...doc.data()
+        })
+      })
+      setRafflesFound(foundRaffles)
+      console.log(rafflesFound);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const checkDay = () => {
     const today = new Date().getDay();
@@ -172,7 +199,7 @@ function RaffleProvaider({ children }) {
   };
 
   const winner = async (IDs) => {
-    // Filtra los boletos no disponibles
+    
     const unavailableTickets = IDs.filter((ticket) => !ticket.disponible);
 
     if (unavailableTickets.length > 0) {
@@ -186,18 +213,31 @@ function RaffleProvaider({ children }) {
 
   const getUser = async (id, fun) => {
     try {
-      // Referencia al documento específico usando su ID
       const docRef = doc(db, "usuarios", id);
 
-      // Obtener el documento
       const docSnapshot = await getDoc(docRef);
 
       if (docSnapshot.exists()) {
-        // El documento fue encontrado
-        const docData = docSnapshot.data(); // Obtienes los datos del documento
-        fun(docData.email); // Aquí puedes hacer lo que necesites con los datos
+        const docData = docSnapshot.data();
+        fun(docData.email);
+        console.log(docData);
+
+        const sendEmail = async () => {
+          try {
+            const response = await axios.post(
+              "https://sendemail-xlulfn643a-uc.a.run.app",
+              {
+                email: docData.email,
+              }
+            );
+            console.log(response.data);
+          } catch (error) {
+            console.error(error);
+          }
+        };
+        sendEmail();
       } else {
-        // El documento no existe
+        
         console.log("No se encontró el documento");
       }
     } catch (error) {
@@ -229,6 +269,13 @@ function RaffleProvaider({ children }) {
         fetchData,
         winner,
         getUser,
+        startDailyCheck,
+        rule, 
+        setRule,
+        defSearchParam,
+        searchParam,
+        search,
+        rafflesFound
       }}
     >
       {children}

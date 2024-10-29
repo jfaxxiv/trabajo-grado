@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Pressable,
   Dimensions,
+  TextInput
 } from "react-native";
 import { Link, Stack, router } from "expo-router";
 import { db } from "../firebase/config";
@@ -19,21 +20,22 @@ import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { handdleIntegrationMP } from '../utils/MPintegration'
-import axios from 'axios'
+import { handdleIntegrationMP } from "../utils/MPintegration";
+import axios from "axios";
 
 const { height } = Dimensions.get("window");
 
 function MenuComponent() {
   const { logOut, userConfirm } = React.useContext(UserContext);
-  const {fetchData} = React.useContext(RafflesContext)
+  const { fetchData, defSearchParam,search,searchParam,rafflesFound } = React.useContext(RafflesContext);
   const [raffles, setRaffles] = React.useState([]);
   const [scrapedData, setScrapedData] = React.useState([]);
-  const [htmlContent, setHtmlContent] = React.useState('');
-    
-const handleBuy = () => {
-  handdleIntegrationMP
-}
+  const [htmlContent, setHtmlContent] = React.useState("");
+  const [searching, setSearching] = React.useState(false);
+
+  const handleBuy = () => {
+    handdleIntegrationMP;
+  };
 
   //obtener rifas creadas
   React.useEffect(() => {
@@ -58,7 +60,7 @@ const handleBuy = () => {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          headerStyle: { backgroundColor: "#27b4ad" },
+          headerStyle: { backgroundColor: "#2DA5F7" },
           headerTitle: "Bienvenido",
           headerTintColor: "white",
           headerTitleStyle: {
@@ -94,21 +96,53 @@ const handleBuy = () => {
             router.replace("/rafflesForm");
           }}
         >
-         
           <View style={styles.iconView}>
-            <MaterialIcons name="create" size={50} color="#27b4ad" />
+            <MaterialIcons name="create" size={50} color="#2DA5F7" />
           </View>
-          <Text>Crea</Text>
         </Pressable>
       </View>
+      <Text style={styles.textIcon}>Crea una Rifa</Text>
+      <TextInput
+        placeholder=""
+        onChangeText={defSearchParam}
+        value={searchParam}
+      />
+      <Button
+        onPress={()=>{
+          search()
+          setSearching(true)
+        }}
+        title="buscar"
+      />
 
-      <Text>Rifas Disponibles</Text>
-      
-      
+      <Text style={styles.h1}>Rifas Disponibles</Text>
 
       {raffles.length === 0 ? (
-        <ActivityIndicator color={"black"} size={"large"} />
-      ) : (
+        <ActivityIndicator color={"#fff"} size={"large"} />
+      ) : searching ? (
+        <FlatList
+          data={rafflesFound}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() => {
+                router.replace(`/ticket/${item.id}`);
+              }}
+            >
+              <View style={styles.rafflesContainer}>
+                <Text style={styles.titleRaffle}>{item.titulo}</Text>
+                <Text style={styles.descriptionRaffle} numberOfLines={3}>
+                  {item.descripcion}
+                </Text>
+                <View style={styles.infoRaffle}>
+                  <Text style={styles.prizeRaffle}>Premio: {item.premio}</Text>
+                  <Text style={styles.priceRaffle}>Precio: ${item.precio}</Text>
+                </View>
+              </View> 
+            </Pressable>
+          )}
+        />
+      ):(
         <FlatList
           data={raffles}
           keyExtractor={(item) => item.id}
@@ -138,7 +172,9 @@ const handleBuy = () => {
 const styles = StyleSheet.create({
   container: {
     fontFamily: "sans-serif",
-    height: height
+    height: height,
+    backgroundColor: "#2ecc71",
+    marginBottom: 20,
   },
   iconView: {
     backgroundColor: "#fff",
@@ -147,7 +183,9 @@ const styles = StyleSheet.create({
   },
   textIcon: {
     textAlign: "center",
-    fontSize: 20,
+    fontSize: 19,
+    color: "#fff",
+    marginBottom: 10,
   },
   textIconContainer: {
     flexDirection: "row",
@@ -157,11 +195,18 @@ const styles = StyleSheet.create({
   },
   iconsContainer: {
     flexDirection: "row",
-    padding: 20,
-    justifyContent: "space-between",
+    paddingTop: 15,
+    justifyContent: "center",
+  },
+
+  h1: {
+    fontSize: 25,
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   rafflesContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "#2DA5F7",
     //borderStyle:"solid",
     //borderColor:"black",
     //borderWidth:3,
@@ -178,7 +223,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     fontSize: 25,
     fontWeight: "bold",
-    color: "#27b4ad",
+    color: "#fff",
     fontWeight: "bold",
     textDecorationLine: "underline",
   },
@@ -187,7 +232,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     // width: 270,
     marginTop: 15,
-    backgroundColor: "#AADFF2",
+    backgroundColor: "#2DA5F7",
+    backgroundColor: "#80E977",
     padding: 8,
     borderRadius: 10,
     elevation: 8,
@@ -196,11 +242,11 @@ const styles = StyleSheet.create({
   prizeRaffle: {
     fontSize: 20,
     //marginTop:"auto",
-    color: "#27b4ad",
+    color: "#fff",
     fontWeight: "bold",
   },
   priceRaffle: {
-    color: "#27b4ad",
+    color: "#fff",
     fontWeight: "bold",
     fontSize: 20,
   },

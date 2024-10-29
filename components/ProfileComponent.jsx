@@ -8,16 +8,19 @@ import {
   ImageBackground,
   SafeAreaView,
   Button,
+  Dimensions,
 } from "react-native";
 import { UserContext } from "../contexts/UserContext";
-import { collection, query, where, getDocs, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, limit } from "firebase/firestore";
 import { db } from "../firebase/config";
 import image from "../assets/img/background.png";
 import { Link, Stack, router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+const { height } = Dimensions.get("window");
+
 const ProfileComponent = () => {
-  const { userConfirm } = React.useContext(UserContext);
+  const { userConfirm } = React.useContext(UserContext); 
 
   const uid = userConfirm.uid;
   //const uid = "ypohS0ChogOMtPUfUHH6nw1Jdtl2";
@@ -48,7 +51,7 @@ const ProfileComponent = () => {
         const ticketRef = collection(raffleDoc.ref, "boletos");
         const raffleData = raffleDoc.data();
 
-        const ticketsQuery = query(ticketRef, where("user", "==", uid));
+        const ticketsQuery = query(ticketRef, where("user", "==", uid),limit(1));
         const ticketsSnapshot = await getDocs(ticketsQuery);
         ticketsSnapshot.forEach((doc) => {
           allTickets.push({
@@ -69,8 +72,9 @@ const ProfileComponent = () => {
       <Stack.Screen
         options={{
           // Hide the header for this route
+          headerStyle: { backgroundColor: "#2DA5F7" },
           headerShown: true,
-          headerTitleAlign: "center",
+          headerTitle:"",
           headerLeft: () => (
             <Pressable
               style={styles.button}
@@ -88,13 +92,10 @@ const ProfileComponent = () => {
 
       {/* <Text>jg020466@gmail.com</Text> */}
 
-      <ImageBackground
-        source={image}
-        resizeMode="cover"
-        imageStyle={{ height: 110 }}
-      >
-        <Text style={styles.textSection}>Rifas Creadas</Text>
-      </ImageBackground>
+    
+      
+       <Text style={styles.textSection}>Rifas Creadas</Text>
+      
 
       {raffles.map((doc) => (
         <View key={doc.id} style={styles.rafflesContainer}>
@@ -105,6 +106,7 @@ const ProfileComponent = () => {
             </Text>
             <Button
               title="elegir al ganador"
+              color="#2ecc71"
               onPress={() => {
                 router.replace(`/winner/${doc.id}`);
               }}
@@ -112,10 +114,15 @@ const ProfileComponent = () => {
           </View>
         </View>
       ))}
-      <Text>Participando</Text>
+      <Text style={styles.textSection}>Participando</Text>
       {rafflesParticipate.map((doc) => (
-        <View key={doc.id}>
-          <Text>{doc.title}</Text>
+        <View key={doc.id} style={styles.rafflesContainer}>
+          <View style={styles.raffleTitleContainer}>
+          <Text style={styles.rafflesCreated}>
+             Estas participando en una rifa llamada: 
+             <Text style={styles.rafflesCreated__tile}> "{doc.title}"</Text>
+          </Text>
+        </View>
         </View>
       ))}
     </View>
@@ -125,13 +132,16 @@ const ProfileComponent = () => {
 const styles = StyleSheet.create({
   container: {
     fontFamily: "sans-serif",
-    backgroundColor: "#27b4ad",
+    backgroundColor: "#2ecc71",
+    height: height,
   },
   rafflesContainer: {
     // backgroundColor:"#27b4ad"
   },
   rafflesCreated: {
     fontSize: 18,
+    color:"#fff",
+    marginBottom:15
     //textAlign:"center"
   },
   rafflesCreated__tile: {
@@ -141,14 +151,14 @@ const styles = StyleSheet.create({
   textSection: {
     fontSize: 25,
     fontWeight: "bold",
-    marginBottom: 80,
-    color: "#27b4ad",
-    paddingTop: 25,
+    marginBottom: 0,
+    color: "#fff",
+    paddingTop: 15,
     paddingRight: 15,
-    textAlign: "right",
+    textAlign: "center",
   },
   raffleTitleContainer: {
-    backgroundColor: "#AADFF2",
+    backgroundColor: "#2DA5F7",
     paddingHorizontal: 15,
     paddingVertical: 10,
     margin: 10,

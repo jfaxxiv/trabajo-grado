@@ -41,7 +41,7 @@ const Winner = () => {
     fetchTickets();
   }, []);
 
-  const onPress = () => {
+  const onPress = async () => {
     const randomTicket = winner(tickets);
     if (randomTicket) {
       console.log("Ticket seleccionado:", randomTicket._j.id);
@@ -61,7 +61,7 @@ const Winner = () => {
           headerLeft: () => (
             <Pressable
               onPress={() => {
-                router.replace("/menu");
+                router.replace("/profile");
               }}
             >
               <Ionicons name="arrow-back" size={24} color="black" />

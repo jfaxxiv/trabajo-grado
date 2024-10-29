@@ -4,6 +4,7 @@ import { MainComponent } from '../components/MainComponent'
 import { TicketsRaffles } from '../components/TicketsRaffles'
 import { MenuComponent } from '../components/MenuComponent'
 import { ProfileComponent } from '../components/ProfileComponent'
+import { RafflesFormComponent } from "../components/RaffleFormComponent";
 
 
 export default function index() {
@@ -13,6 +14,7 @@ export default function index() {
       {/* <MenuComponent /> */}
       {/* <TicketsRaffles /> */}
       {/* <ProfileComponent /> */}
+      {/* <RafflesFormComponent /> */}
     </View>
   );
 }
