@@ -31,17 +31,17 @@ function RafflesFormComponent() {
     defTitle,
     defDescription,
     defPrize,
-    defDescriptionPrize,
+    defDescriptionPrize, 
     defPrice,
     saveRaffle,
     pickImage,
     image,
     uploading,
     rule, 
-    setRule
+    defRule
   } = React.useContext(RafflesContext);
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState([]);
+  const [value, setValue] = React.useState(null);
   const [items, setItems] = React.useState([
     { label: "Loteria del Valle", value: "lottery" },
     { label: "Personalizado", value: "personalized" },
@@ -96,10 +96,7 @@ function RafflesFormComponent() {
             value={prize}
             placeholderTextColor="#fff"
           />
-          {/* <Button 
-            title="seleccionar imagen"
-            onPress={pickImage}
-            /> */}
+          
 
           <Pressable onPress={pickImage}>
             <Feather
@@ -132,14 +129,14 @@ function RafflesFormComponent() {
         />
         <DropDownPicker
           open={open}
-          value={value}
+          value={rule}
           items={items}
           setOpen={setOpen}
-          setValue={setValue}
+          setValue={defRule}
           setItems={setItems}
           multiple={false} 
-          
         />
+        
       </View>
       {/* <Button title="Confirmar" onPress = {() => {
         saveRaffle ()
@@ -151,9 +148,10 @@ function RafflesFormComponent() {
       <LinearGradient colors={["#2DE5F7", "#2DA5F7"]} style={styles.button}>
         <Pressable
           onPress={() => {
-            setRule(value[0])
-            saveRaffle();
-            router.replace("/menu");
+              saveRaffle();
+              router.replace("/menu");
+              console.log(typeof value);
+           
           }}
         >
           <Text style={styles.buttonText}>Confirmar</Text>

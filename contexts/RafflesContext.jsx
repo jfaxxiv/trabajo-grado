@@ -27,7 +27,7 @@ function RaffleProvaider({ children }) {
   const [price, setPrice] = React.useState(0);
   const [image, setImage] = React.useState(null);
   const [uploading, setUploading] = React.useState(false);
-  const [rule, setRule] = React.useState("")
+  const [rule, setRule] = React.useState(null)
   const [searchParam, setSearchParam] = React.useState("")
   const [rafflesFound, setRafflesFound] = React.useState([])
 
@@ -48,6 +48,9 @@ function RaffleProvaider({ children }) {
   };
   const defSearchParam = (text) => {
     setSearchParam(text)
+  }
+  const defRule = (text) => {
+    setRule(text)
   }
 
   const [lista, setLista] = React.useState([]);
@@ -271,7 +274,7 @@ function RaffleProvaider({ children }) {
         getUser,
         startDailyCheck,
         rule, 
-        setRule,
+        defRule,
         defSearchParam,
         searchParam,
         search,
