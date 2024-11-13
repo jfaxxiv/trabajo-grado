@@ -1,5 +1,5 @@
-import { ACCESS_TOKEN } from "../config.json";
-
+import { ACCESS_TOKEN, TEST } from "../config.json";
+//"ACCESS_TOKEN":"APP_USR-723194450483589-091417-0d3ad3f2beb8a0b2f445a1f71afa6d77-657801387",
 export const handdleIntegrationMP = async (raffleData, id, numTickets) => {
   console.log(raffleData);
   const { titulo, descripcion, precio } = raffleData;
@@ -9,10 +9,8 @@ export const handdleIntegrationMP = async (raffleData, id, numTickets) => {
         "id": `${id}`,
         "title": `${titulo}`,
         "description": `${descripcion}`,
-        "category_id": "tickets",
-        "quantity": numTickets,
-        "currency_id": "$",
-        "unit_price": precio,
+        "quantity": 1,
+        "unit_price": 12,
       },
     ],
   };
