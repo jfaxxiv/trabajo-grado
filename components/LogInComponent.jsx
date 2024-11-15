@@ -16,10 +16,11 @@ import { LinearGradient } from "expo-linear-gradient";
 const { height } = Dimensions.get("window");
 
 function LogInComponent() {
-  const { email, password, warning, defEmail, defPassword, login } =
+  const { email, password, defEmail, defPassword, login } =
     React.useContext(UserContext);
 
   const [fontsLoaded, setFontsLoaded] = React.useState(false);
+  const [warning, setWarning] = React.useState("");
 
   React.useEffect(() => {
     if (!fontsLoaded) {
@@ -72,15 +73,21 @@ function LogInComponent() {
           onChangeText={defPassword}
           value={password}
           placeholderTextColor="#fff"
+          secureTextEntry={true}
         />
         <LinearGradient
           colors={["#2DE5F7", "#2DA5F7"]}
           style={styles.button}
         >
           <Pressable
-            onPress={() => {
-              login();
-              router.replace("/menu");
+            onPress={async () => {
+              const result = await login();
+              if(result.success){
+                router.replace("/menu");
+              }else{
+                setWarning("No se encontró el Usuario");
+              }
+              
             }}
           >
             <Text style={styles.buttonText}>Entrar</Text>
@@ -89,9 +96,9 @@ function LogInComponent() {
         <Link href={"/updatePassword"} asChild>
           <Text style={styles.password}>¿Olvidaste tu contraseña?</Text>
         </Link>
+      <Text style={styles.warning}>{warning}</Text>
       </View>
 
-      <Text style={styles.warning}>{warning}</Text>
     </View>
   );
 }
@@ -103,7 +110,7 @@ const styles = StyleSheet.create({
     elevation: 20,
     display: "flex",
     flex: 1,
-    fontFamily: "grand-casino",
+    //fontFamily: "grand-casino",
   },
   header: {
     backgroundColor: "#2DA5F7",
@@ -113,14 +120,14 @@ const styles = StyleSheet.create({
     paddingTop: 70,
   },
   title: {
-    fontSize: 70,
-    fontFamily: "grand-casino",
+    fontSize: 60,
+    //fontFamily: "grand-casino",
     color: "#fff",
     marginTop: 25,
     elevation: 10,
   },
   input: {
-    fontFamily: "grand-casino",
+    //fontFamily: "grand-casino",
     marginBottom: 40,
     paddingHorizontal: 15,
     borderWidth: 2,
@@ -134,11 +141,12 @@ const styles = StyleSheet.create({
   },
   warning: {
     color: "red",
-    marginTop: 10,
+    marginTop: 0,
+    fontSize:20
   },
   button: {
     margin: 0,
-    backgroundColor: "#27b4ad",
+    backgroundColor: "#27b4ad", 
     height: 50,
     textAlign: "center",
     paddingTop: 10,
@@ -150,14 +158,14 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     textAlign: "center",
-    fontSize: 30,
-    fontFamily: "grand-casino",
+    fontSize: 25,
+    //fontFamily: "grand-casino",
   },
   password: {
     color: "#fff",
     marginVertical: 15,
     fontSize: 21,
-    fontFamily: "grand-casino",
+    //fontFamily: "grand-casino",
     textDecorationLine: "underline",
   },
   formContainer: {

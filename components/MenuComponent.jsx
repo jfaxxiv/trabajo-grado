@@ -10,7 +10,7 @@ import {
   SafeAreaView,
   Pressable,
   Dimensions,
-  TextInput
+  TextInput,
 } from "react-native";
 import { Link, Stack, router } from "expo-router";
 import { db } from "../firebase/config";
@@ -27,7 +27,8 @@ const { height } = Dimensions.get("window");
 
 function MenuComponent() {
   const { logOut, userConfirm } = React.useContext(UserContext);
-  const { fetchData, defSearchParam,search,searchParam,rafflesFound } = React.useContext(RafflesContext);
+  const { fetchData, defSearchParam, search, searchParam, rafflesFound } =
+    React.useContext(RafflesContext);
   const [raffles, setRaffles] = React.useState([]);
   const [scrapedData, setScrapedData] = React.useState([]);
   const [htmlContent, setHtmlContent] = React.useState("");
@@ -89,6 +90,29 @@ function MenuComponent() {
         <Button title="Perfil" />
       </Link>
       <Button title="cerrar sesion" onPress={logOut} /> */}
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          marginTop: 13,
+        }}
+      >
+        <TextInput
+          style={styles.input}
+          placeholder="Busca tu Rifa por titulo"
+          onChangeText={defSearchParam}
+          value={searchParam}
+        />
+        <Pressable
+          onPress={() => {
+            search();
+            setSearching(true);
+          }}
+        >
+          <Ionicons name="search" size={44} color="#fff" />
+        </Pressable>
+      </View>
       <View style={styles.iconsContainer}>
         <Pressable
           style={styles.button}
@@ -102,18 +126,8 @@ function MenuComponent() {
         </Pressable>
       </View>
       <Text style={styles.textIcon}>Crea una Rifa</Text>
-      <TextInput
-        placeholder=""
-        onChangeText={defSearchParam}
-        value={searchParam}
-      />
-      <Button
-        onPress={()=>{
-          search()
-          setSearching(true)
-        }}
-        title="buscar"
-      />
+
+      
 
       <Text style={styles.h1}>Rifas Disponibles</Text>
 
@@ -138,11 +152,11 @@ function MenuComponent() {
                   <Text style={styles.prizeRaffle}>Premio: {item.premio}</Text>
                   <Text style={styles.priceRaffle}>Precio: ${item.precio}</Text>
                 </View>
-              </View> 
+              </View>
             </Pressable>
           )}
         />
-      ):(
+      ) : (
         <FlatList
           data={raffles}
           keyExtractor={(item) => item.id}
@@ -166,6 +180,7 @@ function MenuComponent() {
           )}
         />
       )}
+      <View style={{ height: 50 }}></View>
     </View>
   );
 }
@@ -254,6 +269,16 @@ const styles = StyleSheet.create({
     marginTop: "auto",
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  input: {
+    borderWidth: 2,
+    borderColor: "#fff",
+    //marginHorizontal:30,
+    height: 40,
+    borderRadius: 50,
+    width: 250,
+    marginRight: 7,
+    paddingLeft: 13,
   },
 });
 

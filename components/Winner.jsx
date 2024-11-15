@@ -9,7 +9,7 @@ import { db } from "../firebase/config";
 
 const Winner = () => {
   const { id } = useLocalSearchParams();
-  const { winner, getUser } = React.useContext(RafflesContext);
+  const { winner, getUser,lotteryWin } = React.useContext(RafflesContext);
   const [tickets, setTickets] = React.useState([]);
   const [userWinner, setUserWinner] = React.useState({});
   const [user, setUser] = React.useState("");
@@ -43,11 +43,13 @@ const Winner = () => {
 
   const onPress = async () => {
     const randomTicket = winner(tickets);
+    lotteryWin(10,tickets)
     if (randomTicket) {
       console.log("Ticket seleccionado:", randomTicket._j.id);
       setUserWinner(randomTicket._j);
       getUser(randomTicket._j.user, setUser);
     }
+
     console.log(user);
   };
 
@@ -55,7 +57,6 @@ const Winner = () => {
     <View>
       <Stack.Screen
         options={{
-          // Hide the header for this route
           headerShown: true,
           headerTitleAlign: "center",
           headerLeft: () => (

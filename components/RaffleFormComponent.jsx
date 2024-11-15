@@ -18,6 +18,7 @@ import { Link, Stack, router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import DropDownPicker from "react-native-dropdown-picker";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const { height } = Dimensions.get("window");
 
@@ -38,7 +39,11 @@ function RafflesFormComponent() {
     image,
     uploading,
     rule, 
-    defRule
+    defRule,
+    startDailyCheck,
+    fetchData,
+    date,
+    defDate
   } = React.useContext(RafflesContext);
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(null);
@@ -46,6 +51,18 @@ function RafflesFormComponent() {
     { label: "Loteria del Valle", value: "lottery" },
     { label: "Personalizado", value: "personalized" },
   ]);
+
+  
+  const [show, setShow] = React.useState(false);
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(false);
+    defDate(currentDate);
+  };
+  const showDatePicker = () => {
+    setShow(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -136,7 +153,22 @@ function RafflesFormComponent() {
           setItems={setItems}
           multiple={false} 
         />
-        
+        <View style={{marginTop:10}}>
+         <Button 
+         onPress={showDatePicker} 
+         title="Seleccionar Fecha"
+         color="#2DA5F7"
+          />
+          {show && (
+        <DateTimePicker
+          value={date}
+          mode="date"
+          display="calendar"
+          onChange={onChange}
+        />
+
+      )}
+      </View>
       </View>
       {/* <Button title="Confirmar" onPress = {() => {
         saveRaffle ()
@@ -149,6 +181,10 @@ function RafflesFormComponent() {
         <Pressable
           onPress={() => {
               saveRaffle();
+              if(rule === "lottery"){
+                fetchData()
+                console.log("ver db");
+              }
               router.replace("/menu");
               console.log(typeof value);
            
@@ -173,7 +209,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   input: {
-    marginBottom: 40,
+    marginBottom: 20,
     paddingHorizontal: 15,
     borderWidth: 2,
     borderColor: "#fff",

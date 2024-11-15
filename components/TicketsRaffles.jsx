@@ -203,6 +203,7 @@ function TicketsRaffles() {
           onPress={async () => {
             //const data = await handdleIntegrationMP(raffleData, id, lista.length);
             //openBrowserAsync(data);
+            //fetchData();
             getTickets();
             router.replace("/menu");
           }}

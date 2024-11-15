@@ -50,17 +50,25 @@ function UserProvider({ children }) {
     }
   };
   //iniciar sesion con usuario
-  const login = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        setWarning("No se encontro el Usuario");
-      });
+  const login = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      return { success: true, user };
+    } catch (error) {
+       
+      return { success: false, message: "No se encontró el Usuario" }; 
+    }
+    // signInWithEmailAndPassword(auth, email, password)
+    //   .then((userCredential) => {
+    //     // Signed in
+    //     const user = userCredential.user;
+    //   })
+    //   .catch((error) => {
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //     setWarning("No se encontro el Usuario");
+    //   });
   };
 
   //cerrar sesion

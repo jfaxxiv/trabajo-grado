@@ -19,7 +19,7 @@ import * as Font from "expo-font"
 
 const { height } = Dimensions.get("window");
 
-function SignInComponent() {
+function SignInComponent() { 
   const {
     email,
     password,
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     elevation: 20,
     display: "flex",
     flex: 1,
-    fontFamily:"grand-casino",
+    //fontFamily:"grand-casino",
   },
   header: {
     
@@ -153,8 +153,8 @@ const styles = StyleSheet.create({
   },
   title: {
     //fontWeight: "bold",
-    fontSize: 70,
-    fontFamily:"grand-casino",
+    fontSize: 65,
+    //fontFamily:"grand-casino",
     color: "#fff",
     marginTop: 25,
     // textAlign: "center",
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     elevation:10
   },
   input: {
-    fontFamily:"grand-casino",
+    //fontFamily:"grand-casino",
     marginBottom: 40,
     paddingHorizontal: 15,
     borderWidth: 2,
@@ -183,12 +183,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   button: {
-    marginTop: 30,
+    marginTop: 0,
     //backgroundColor: "#fff",
     height: 50,
     textAlign: "center",
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 5,
+    paddingBottom:5,
     fontSize: 20,
     color: "#fff",
     borderRadius: 5,
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     //fontWeight: "bold",
     fontSize: 30,
-    fontFamily:"grand-casino"
+    //fontFamily:"grand-casino"
   },
   formContainer: {
     margin: 32,

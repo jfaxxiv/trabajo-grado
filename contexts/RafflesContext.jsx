@@ -30,6 +30,11 @@ function RaffleProvaider({ children }) {
   const [rule, setRule] = React.useState(null)
   const [searchParam, setSearchParam] = React.useState("")
   const [rafflesFound, setRafflesFound] = React.useState([])
+  const [date, setDate] = React.useState(new Date());
+
+  const defDate = (date) => {
+    setDate(date)
+  }
 
   const defTitle = (text) => {
     setTitle(text);
@@ -113,6 +118,7 @@ function RaffleProvaider({ children }) {
       usuario: userConfirm.uid,
       imageUrl: imageUrl,
       regla:rule,
+      fechaRealizacion: date,
       fechaCreacion: Timestamp.now(),
     };
 
@@ -151,7 +157,7 @@ function RaffleProvaider({ children }) {
 
   const checkDay = () => {
     const today = new Date().getDay();
-    if (today == 4) {
+    if (today == 3) {
       console.log("es jueves");
       return true;
     } else {
@@ -174,6 +180,7 @@ function RaffleProvaider({ children }) {
       const data = {
         number: winNumber,
         fecha: Timestamp.now(),
+        loteria: "Valle"
       };
       const collectionRef = collection(db, "winNumbers");
       const docRef = addDoc(collectionRef, data);
@@ -187,8 +194,9 @@ function RaffleProvaider({ children }) {
 
   const startDailyCheck = async () => {
     try {
-      BackgroundTimer.setInterval(
+      setTimeout(
         async () => {
+
           const isCorrectDay = checkDay();
           if (isCorrectDay) {
             await fetchData();
@@ -214,6 +222,15 @@ function RaffleProvaider({ children }) {
     }
   };
 
+const lotteryWin = (num,IDs) =>{
+  const winner = IDs.find((ticket) => ticket.id == num);
+  if(winner.disponible){
+    console.log(`El numero ganador fue ${num} pero nadie participo con ese numero`);
+  }else{
+    console.log(`El ganador fue el usuario ${winner.user}`);
+  }
+}
+
   const getUser = async (id, fun) => {
     try {
       const docRef = doc(db, "usuarios", id);
@@ -238,7 +255,7 @@ function RaffleProvaider({ children }) {
             console.error(error);
           }
         };
-        sendEmail();
+        //sendEmail();
       } else {
         
         console.log("No se encontró el documento");
@@ -278,7 +295,10 @@ function RaffleProvaider({ children }) {
         defSearchParam,
         searchParam,
         search,
-        rafflesFound
+        rafflesFound,
+        lotteryWin,
+        date,
+        defDate
       }}
     >
       {children}

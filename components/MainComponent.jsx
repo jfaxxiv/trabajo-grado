@@ -48,7 +48,7 @@ export default function MainComponent() {
           headerTitle: "Rifa Magica",
           headerTintColor: "white",
           headerTitleStyle: {
-            fontFamily: "grand-casino",
+            //fontFamily: "grand-casino",
             fontSize: 35,
           },
           headerTitleAlign: "center",
@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#27b4ad",
     height: 50,
     textAlign: "center",
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
     fontSize: 20,
     color: "#fff",
     borderRadius: 5,
@@ -146,14 +146,15 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     margin: 20,
-    fontFamily: "grand-casino",
+    //fontFamily: "grand-casino",
   },
   buttonText: {
     color: "#2DA5F7",
     textAlign: "center",
     //fontWeight: "bold",
-    fontSize: 30,
-    fontFamily: "grand-casino",
+    fontSize: 28,
+    //fontFamily: "grand-casino",
+    
   },
 });
 
