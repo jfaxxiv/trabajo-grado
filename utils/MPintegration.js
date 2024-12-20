@@ -1,5 +1,5 @@
 import { ACCESS_TOKEN, TEST } from "../config.json";
-//"ACCESS_TOKEN":"APP_USR-723194450483589-091417-0d3ad3f2beb8a0b2f445a1f71afa6d77-657801387",
+
 export const handdleIntegrationMP = async (raffleData, id, numTickets) => {
   console.log(raffleData);
   const { titulo, descripcion, precio } = raffleData;
@@ -20,7 +20,7 @@ export const handdleIntegrationMP = async (raffleData, id, numTickets) => {
       {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${ACCESS_TOKEN}`,
+          "Authorization": `Bearer ${TEST}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(preference),
