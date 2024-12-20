@@ -1,11 +1,13 @@
 import React from "react";
-import { View, Text, Button, TextInput, StyleSheet } from "react-native";
+import { View, Text, Button, TextInput, StyleSheet,Pressable } from "react-native";
 import { auth } from "../firebase/config";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { Link, Stack, router } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 
 // const auth = initializeAuth(app, {
-//   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+//   persistence: getReactNativePersistence(ReactNativeAsyncStorage) 
 // });
 
 function UpdatePasswordComponent(props) {
@@ -27,7 +29,23 @@ function UpdatePasswordComponent(props) {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerTitle: "",
+          headerLeft: () => (
+            <Pressable
+              style={styles.button}
+              onPress={() => {
+                router.replace("/");
+              }}
+            >
+              <Ionicons name="arrow-back" size={24} color="#000" />
+            </Pressable>
+          ),
+        }}
+      />
       <Text style={styles.label}>
         Ingresa el correo con el que te registraste
       </Text>

@@ -42,7 +42,7 @@ function MenuComponent() {
   React.useEffect(() => {
     const fetchRaffles = async () => {
       try {
-        const snapshot = await getDocs(collection(db, "raffles"));
+        const snapshot = await getDocs(collection(db, "Rifas"));
         const rafflesList = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),

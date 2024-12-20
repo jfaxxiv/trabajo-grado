@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { db } from "../firebase/config";
 import { useLocalSearchParams } from "expo-router";
-import {
+import { 
   collection,
   getDocs,
   getDoc,
@@ -44,7 +44,7 @@ function TicketsRaffles() {
     const getRaffleData = async () => {
       try {
         // Referencia al documento
-        const raffleDocRef = doc(db, "raffles", id);
+        const raffleDocRef = doc(db, "Rifas", id);
 
         // Obtener el documento
         const raffleDoc = await getDoc(raffleDocRef);
@@ -63,7 +63,7 @@ function TicketsRaffles() {
 
     const fetchTickets = async () => {
       const querySnapshot = await getDocs(
-        collection(db, "raffles", id, "boletos")
+        collection(db, "Rifas", id, "Boletos")
       );
       const fetchedTickets = [];
 
@@ -71,8 +71,8 @@ function TicketsRaffles() {
         const data = doc.data();
         fetchedTickets.push({
           id: doc.id,
-          number: data.number,
-          disponible: data.diponible,
+          number: data.numero,
+          disponible: data.disponibilidad,
         });
       });
 
@@ -98,21 +98,24 @@ function TicketsRaffles() {
           return;
         }
 
-        const docRef = doc(db, "raffles", id, "boletos", idTicket);
+        const docRef = doc(db, "Rifas", id, "Boletos", idTicket);
         try {
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const data = docSnap.data();
   
             // Verificar si el campo "disponible" es true antes de actualizar
-            if (data.diponible === true) {
+            if (data.disponibilidad === true) {
               await updateDoc(docRef, {
-                diponible: false,
-                user: userConfirm.uid,
+                disponibilidad: false,
+                comprador: userConfirm.uid,
               });
               console.log(`Ticket ${idTicket} actualizado exitosamente.`);
+              router.replace("/menu");
             } else {
               console.log(`Ticket ${idTicket} ya no está disponible.`);
+              Alert.alert(`Ticket ${idTicket} ya no está disponible.`);
+
             }
           } else {
             console.log(`El documento con ID ${idTicket} no existe.`);
@@ -184,7 +187,7 @@ function TicketsRaffles() {
       <View style={styles.header}>
         <Text style={styles.title}>{raffleData.premio}</Text>
         <Image
-          source={{ uri: raffleData.imageUrl }}
+          source={{ uri: raffleData.imagen_url }}
           style={{ width: 150, height: 110 }}
         />
       </View>
@@ -205,7 +208,7 @@ function TicketsRaffles() {
             //openBrowserAsync(data);
             //fetchData();
             getTickets();
-            router.replace("/menu");
+            
           }}
         >
           <Text style={styles.buttonText}>COMPRAR</Text>
@@ -229,11 +232,12 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
   listContainer: {
-    height: 500,
+    height: 450,
     marginTop: 5,
+    textAlign:"center"
   },
   item_button: {
-    margin: 10,
+    margin: 5,
     backgroundColor: "#2ecc71",
     textAlign: "center",
     paddingTop: 0,

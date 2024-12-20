@@ -1,9 +1,7 @@
 import { View, Text,Pressable } from "react-native";
 import React from "react";
-import Winner from "../../components/Winner";
+import Winner from "../../components/LotteryWinnerromponent";
 
-import { Link, Stack, router } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 const winner = () => {
   return (

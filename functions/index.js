@@ -20,12 +20,12 @@ const logger = require("firebase-functions/logger");
 const functions = require("firebase-functions");
 const nodemailer = require("nodemailer");
 
-// Configurar el servicio de correo, por ejemplo, Gmail (puedes usar cualquier servicio SMTP)
+
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
         user: "juanfelipearciniegas21@gmail.com", // Tu correo electrónico
-        pass: "ydoe ayep tuyj engj"        // Tu contraseña (puede que necesites generar una contraseña de aplicación)
+        pass: "ydoe ayep tuyj engj"        // Tu contraseña 
     }
 });
 
@@ -34,8 +34,8 @@ exports.sendEmail = functions.https.onRequest((req, res) => {
     const mailOptions = {
         from: "juanfelipearciniegas21@gmail.com", // Correo remitente
         to: req.body.email,          // Correo destinatario
-        subject: "Asunto del correo",
-        text: "Contenido del correo" // También puedes usar 'html' para contenido HTML
+        subject: "Ganador",
+        text: "Felicidades Ganaste!!" 
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

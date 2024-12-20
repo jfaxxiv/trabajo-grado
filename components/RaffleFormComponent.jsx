@@ -5,9 +5,6 @@ import {
   TextInput,
   Text,
   Button,
-  Platform,
-  TouchableOpacity,
-  Image,
   Dimensions,
   Pressable,
 } from "react-native";
@@ -41,14 +38,15 @@ function RafflesFormComponent() {
     rule, 
     defRule,
     startDailyCheck,
-    fetchData,
+    fetchDataValle,
     date,
     defDate
   } = React.useContext(RafflesContext);
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(null);
   const [items, setItems] = React.useState([
-    { label: "Loteria del Valle", value: "lottery" },
+    { label: "Loteria del Valle", value: "valle" },
+    { label: "Loteria de Medellin", value: "medellin" },
     { label: "Personalizado", value: "personalized" },
   ]);
 
@@ -118,11 +116,11 @@ function RafflesFormComponent() {
           <Pressable onPress={pickImage}>
             <Feather
               name="upload"
-              size={50}
+              size={40}
               color="#fff"
               style={{ textAlign: "center" }}
             />
-            <Text style={{ color: "#fff", fontSize: 15 }}>Subir Imagen</Text>
+            <Text style={{ color: "#fff", fontSize: 14 }}>Subir Imagen</Text>
           </Pressable>
         </View>
         {/* <Text style={styles.label}>Descripcion del premio</Text> */}
@@ -144,6 +142,8 @@ function RafflesFormComponent() {
           keyboardType="numeric"
           placeholderTextColor="#fff"
         />
+          <View style={styles.pickerContainer}>
+
         <DropDownPicker
           open={open}
           value={rule}
@@ -152,7 +152,10 @@ function RafflesFormComponent() {
           setValue={defRule}
           setItems={setItems}
           multiple={false} 
-        />
+          style={styles.picker}
+          dropDownContainerStyle={styles.dropDownStyle}
+          />
+          </View>
         <View style={{marginTop:10}}>
          <Button 
          onPress={showDatePicker} 
@@ -170,24 +173,11 @@ function RafflesFormComponent() {
       )}
       </View>
       </View>
-      {/* <Button title="Confirmar" onPress = {() => {
-        saveRaffle ()
-        console.log(image);
-        //router.replace("/menu")
-      }} 
-      disabled={uploading}
-        /> */}
       <LinearGradient colors={["#2DE5F7", "#2DA5F7"]} style={styles.button}>
         <Pressable
           onPress={() => {
               saveRaffle();
-              if(rule === "lottery"){
-                fetchData()
-                console.log("ver db");
-              }
               router.replace("/menu");
-              console.log(typeof value);
-           
           }}
         >
           <Text style={styles.buttonText}>Confirmar</Text>
@@ -214,8 +204,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#fff",
     borderRadius: 6,
-    height: 60,
-    fontSize: 20,
+    height: 40,
+    fontSize: 15,
     textDecoration: "none",
     color: "#fff",
     paddingVertical: 0,
@@ -236,12 +226,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#fff",
     borderRadius: 6,
-    height: 60,
-    fontSize: 20,
+    height: 40,
+    fontSize: 15,
     textDecoration: "none",
     color: "#fff",
     paddingVertical: 0,
-    width: 250,
+    width: 200,
   },
   buttonText: {
     color: "#fff",
@@ -256,11 +246,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#fff",
     borderRadius: 5,
+    marginTop:50,
   },
   buttonText: {
     color: "#fff",
     textAlign: "center",
     fontSize: 25,
+  },
+  dropDownStyle: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  pickerContainer: {
+    width: "100%",
+    zIndex: 300, // Asegura que el picker esté sobre otros elementos
   },
 });
 

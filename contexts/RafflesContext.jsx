@@ -27,14 +27,14 @@ function RaffleProvaider({ children }) {
   const [price, setPrice] = React.useState(0);
   const [image, setImage] = React.useState(null);
   const [uploading, setUploading] = React.useState(false);
-  const [rule, setRule] = React.useState(null)
-  const [searchParam, setSearchParam] = React.useState("")
-  const [rafflesFound, setRafflesFound] = React.useState([])
+  const [rule, setRule] = React.useState(null);
+  const [searchParam, setSearchParam] = React.useState("");
+  const [rafflesFound, setRafflesFound] = React.useState([]);
   const [date, setDate] = React.useState(new Date());
 
   const defDate = (date) => {
-    setDate(date)
-  }
+    setDate(date);
+  };
 
   const defTitle = (text) => {
     setTitle(text);
@@ -52,11 +52,11 @@ function RaffleProvaider({ children }) {
     setPrice(Number(num));
   };
   const defSearchParam = (text) => {
-    setSearchParam(text)
-  }
+    setSearchParam(text);
+  };
   const defRule = (text) => {
-    setRule(text)
-  }
+    setRule(text);
+  };
 
   const [lista, setLista] = React.useState([]);
   React.useEffect(() => {
@@ -65,17 +65,12 @@ function RaffleProvaider({ children }) {
       const numero = i.toString().padStart(2, "0");
       numeros.push(numero);
     }
-    
+
     setLista(numeros);
   }, []);
 
   const pickImage = async () => {
-    //pedir permisos para acceder a galeria
-    // const  result = await ImagePicker.requestMediaLibraryPermissionsAsync()
-    // if (result.granted === false ){
-    //   alert("Permiso Denegado")
-    //   return
-    // }
+
 
     //abrir galeria
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -113,23 +108,33 @@ function RaffleProvaider({ children }) {
       titulo: titleRaffle,
       descripcion: description,
       premio: prize,
-      descripcionPremio: descriptionPrize,
+      descripcion_premio: descriptionPrize,
       precio: price,
-      usuario: userConfirm.uid,
-      imageUrl: imageUrl,
-      regla:rule,
-      fechaRealizacion: date,
-      fechaCreacion: Timestamp.now(),
+      creador: userConfirm.uid,
+      imagen_url: imageUrl,
+      metodo_eleccion_ganador: rule,
+      fecha_realizacion: date,
+      fecha_creacion: Timestamp.now(),
     };
+    // titulo: titleRaffle,
+    //   descripcion: description,
+    //   premio: prize,
+    //   descripcion_premio: descriptionPrize,
+    //   precio: price,
+    //   creador: userConfirm.uid,
+    //   imagen_url: imageUrl,
+    //   metodo_eleccion_ganador: rule,
+    //   fecha_realizacion: date,
+    //   fecha_creacion: Timestamp.now(),
 
-    const raffleRef = await addDoc(collection(db, "raffles"), docData);
-    const ticketsSubcollectionRef = collection(raffleRef, "boletos");
+    const raffleRef = await addDoc(collection(db, "Rifas"), docData);
+    const ticketsSubcollectionRef = collection(raffleRef, "Boletos");
 
     for (var i = 0; i <= 100; i++) {
       await setDoc(doc(ticketsSubcollectionRef, `${i}`), {
-        number: lista[i],
-        diponible: true,
-        user: null,
+        numero: lista[i],
+        disponibilidad: true,
+        comprador: null,
       });
     }
 
@@ -138,35 +143,26 @@ function RaffleProvaider({ children }) {
 
   const search = async () => {
     try {
-      const raffleRef = collection(db,"raffles")
-      const q = query(raffleRef,where("titulo","==",searchParam))
-      const querySnapshot = await getDocs(q)
-      const foundRaffles = []
-      querySnapshot.forEach((doc)=>{
+      const raffleRef = collection(db, "Rifas");
+      const q = query(raffleRef, where("titulo", "==", searchParam));
+      const querySnapshot = await getDocs(q);
+      const foundRaffles = [];
+      querySnapshot.forEach((doc) => {
         foundRaffles.push({
           id: doc.id,
-          ...doc.data()
-        })
-      })
-      setRafflesFound(foundRaffles)
+          ...doc.data(),
+        });
+      });
+      setRafflesFound(foundRaffles);
       console.log(rafflesFound);
     } catch (error) {
       console.log(error);
     }
-  }
-
-  const checkDay = () => {
-    const today = new Date().getDay();
-    if (today == 3) {
-      console.log("es jueves");
-      return true;
-    } else {
-      console.log("no es jueves");
-      return false;
-    }
   };
 
-  const fetchData = async () => {
+
+
+  const fetchDataValle = async (IDs, fun1, fun2) => {
     try {
       const response = await axios.get(
         "http://api.scraperapi.com?api_key=495eea07294cce137757f77e02ab36de&url=https://loteriasdehoy.co/loteria-del-valle"
@@ -175,42 +171,131 @@ function RaffleProvaider({ children }) {
       const regex = /<span\s+class=["']redondo premio1["'][^>]*>(.*?)<\/span>/g;
       const matches = [...htmlContent.matchAll(regex)];
       const contents = matches.map((match) => match[1]);
+      console.log(contents);
       const scrapedData = contents;
-      const winNumber = Number(scrapedData.join(""));
-      const data = {
-        number: winNumber,
-        fecha: Timestamp.now(),
-        loteria: "Valle"
-      };
-      const collectionRef = collection(db, "winNumbers");
-      const docRef = addDoc(collectionRef, data);
-      console.log("guardo");
-      //console.log(htmlContent);
-      //console.log(`esto es: ${scrapedData}`);
+      const winNumber = parseInt(
+        scrapedData[scrapedData.length - 2] +
+          scrapedData[scrapedData.length - 1]
+      ); //Number(scrapedData.join(""));
+      const winner = IDs.find((ticket) => ticket.id == winNumber);
+      if (winner.disponible) {
+        console.log(
+          `El numero ganador fue ${winNumber} pero nadie participo con ese numero`
+        );
+        fun1("(No hubo ganador)");
+        fun2(winNumber)
+      } else {
+        console.log(`El ganador fue el usuario ${winner.user}`);
+        //fun(winner.user)
+        fun2(winNumber)
+        const getUserLottery = async () => {
+          try {
+          
+            const docRef = doc(db, "usuarios", winner.user);
+  
+            const docSnapshot = await getDoc(docRef);
+  
+            if (docSnapshot.exists()) {
+              const docData = docSnapshot.data();
+              fun1(docData.email);
+              console.log(docData);
+  
+              const sendEmail = async () => {
+                try {
+                  const response = await axios.post(
+                    "https://sendemail-xlulfn643a-uc.a.run.app",
+                    {
+                      email: docData.email,
+                    }
+                  );
+                  console.log(response.data);
+                } catch (error) {
+                  console.error(error);
+                }
+              };
+              sendEmail();
+            } else {
+              console.log("No se encontró el documento");
+            }
+          } catch (error) {
+            console.error("Error al obtener el documento: ", error);
+          }
+        };
+        getUserLottery();
+      }
+      //return winNumber;
     } catch (error) {
       console.log(error);
     }
   };
-
-  const startDailyCheck = async () => {
+  const fetchDataMedellin = async (IDs, fun1, fun2) => {
     try {
-      setTimeout(
-        async () => {
-
-          const isCorrectDay = checkDay();
-          if (isCorrectDay) {
-            await fetchData();
-          }
-        },
-        24 * 60 * 60 * 1000
+      const response = await axios.get(
+        "http://api.scraperapi.com?api_key=495eea07294cce137757f77e02ab36de&url=https://loteriasdehoy.co/loteria-de-medellin"
       );
+      const htmlContent = response.data;
+      const regex = /<span\s+class=["']redondo premio1["'][^>]*>(.*?)<\/span>/g;
+      const matches = [...htmlContent.matchAll(regex)];
+      const contents = matches.map((match) => match[1]);
+      console.log(contents);
+      const scrapedData = contents;
+      const winNumber = parseInt(
+        scrapedData[scrapedData.length - 2] +
+          scrapedData[scrapedData.length - 1]
+      ); //Number(scrapedData.join(""));
+      const winner = IDs.find((ticket) => ticket.id == winNumber);
+      if (winner.disponible) {
+        console.log(
+          `El numero ganador fue ${winNumber} pero nadie participo con ese numero`
+        );
+        fun1("(No hubo ganador)");
+        fun2(winNumber)
+      } else {
+        console.log(`El ganador fue el usuario ${winner.user}`);
+        //fun(winner.user)
+        fun2(winNumber)
+        const getUserLottery = async () => {
+          try {
+          
+            const docRef = doc(db, "usuarios", winner.user);
+  
+            const docSnapshot = await getDoc(docRef);
+  
+            if (docSnapshot.exists()) {
+              const docData = docSnapshot.data();
+              fun1(docData.email);
+              console.log(docData);
+  
+              const sendEmail = async () => {
+                try {
+                  const response = await axios.post(
+                    "https://sendemail-xlulfn643a-uc.a.run.app",
+                    {
+                      email: docData.email,
+                    }
+                  );
+                  console.log(response.data);
+                } catch (error) {
+                  console.error(error);
+                }
+              };
+              sendEmail();
+            } else {
+              console.log("No se encontró el documento");
+            }
+          } catch (error) {
+            console.error("Error al obtener el documento: ", error);
+          }
+        };
+        getUserLottery();
+      }
+      //return winNumber;
     } catch (error) {
       console.log(error);
     }
   };
 
   const winner = async (IDs) => {
-    
     const unavailableTickets = IDs.filter((ticket) => !ticket.disponible);
 
     if (unavailableTickets.length > 0) {
@@ -222,14 +307,51 @@ function RaffleProvaider({ children }) {
     }
   };
 
-const lotteryWin = (num,IDs) =>{
-  const winner = IDs.find((ticket) => ticket.id == num);
-  if(winner.disponible){
-    console.log(`El numero ganador fue ${num} pero nadie participo con ese numero`);
-  }else{
-    console.log(`El ganador fue el usuario ${winner.user}`);
-  }
-}
+  const lotteryWin = async (num, IDs, fun) => {
+    const winner = IDs.find((ticket) => ticket.id == num);
+    if (winner.disponible) {
+      console.log(
+        `El numero ganador fue ${num} pero nadie participo con ese numero`
+      );
+      fun("(No hubo ganador)");
+    } else {
+      console.log(`El ganador fue el usuario ${winner.comprador}`);
+      //fun(winner.user)
+      const getUserLottery = async () => {
+        try {
+          const docRef = doc(db, "usuarios", winner.comprador);
+
+          const docSnapshot = await getDoc(docRef);
+
+          if (docSnapshot.exists()) {
+            const docData = docSnapshot.data();
+            fun(docData.email);
+            console.log(docData);
+
+            const sendEmail = async () => {
+              try {
+                const response = await axios.post(
+                  "https://sendemail-xlulfn643a-uc.a.run.app",
+                  {
+                    email: docData.email,
+                  }
+                );
+                console.log(response.data);
+              } catch (error) {
+                console.error(error);
+              }
+            };
+            sendEmail();
+          } else {
+            console.log("No se encontró el documento");
+          }
+        } catch (error) {
+          console.error("Error al obtener el documento: ", error);
+        }
+      };
+      getUserLottery();
+    }
+  };
 
   const getUser = async (id, fun) => {
     try {
@@ -255,9 +377,8 @@ const lotteryWin = (num,IDs) =>{
             console.error(error);
           }
         };
-        //sendEmail();
+        sendEmail();
       } else {
-        
         console.log("No se encontró el documento");
       }
     } catch (error) {
@@ -286,11 +407,11 @@ const lotteryWin = (num,IDs) =>{
         saveRaffle,
         pickImage,
         image,
-        fetchData,
+        fetchDataValle,
         winner,
         getUser,
-        startDailyCheck,
-        rule, 
+        fetchDataMedellin,
+        rule,
         defRule,
         defSearchParam,
         searchParam,
@@ -298,7 +419,7 @@ const lotteryWin = (num,IDs) =>{
         rafflesFound,
         lotteryWin,
         date,
-        defDate
+        defDate,
       }}
     >
       {children}

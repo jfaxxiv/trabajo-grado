@@ -19,7 +19,7 @@ import {
   doc,
   limit,
 } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { db } from "../firebase/config"; 
 import { Link, Stack, router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -46,7 +46,7 @@ const ProfileComponent = () => {
   React.useEffect(() => {
     //Rifas creadas
     const fetchData = async () => {
-      const q = query(collection(db, "raffles"), where("usuario", "==", uid));
+      const q = query(collection(db, "Rifas"), where("creador", "==", uid));
       const querySnapshot = await getDocs(q);
       const rafflesList = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -56,18 +56,18 @@ const ProfileComponent = () => {
     };
     //Rifas en las que participa
     const fetchDataParticipate = async () => {
-      const rafflesRef = collection(db, "raffles");
+      const rafflesRef = collection(db, "Rifas");
       const rafflesSnapshot = await getDocs(rafflesRef);
 
       const allTickets = [];
 
       for (const raffleDoc of rafflesSnapshot.docs) {
-        const ticketRef = collection(raffleDoc.ref, "boletos");
+        const ticketRef = collection(raffleDoc.ref, "Boletos");
         const raffleData = raffleDoc.data();
 
         const ticketsQuery = query(
           ticketRef,
-          where("user", "==", uid),
+          where("comprador", "==", uid),
           limit(1)
         );
         const ticketsSnapshot = await getDocs(ticketsQuery);
@@ -86,7 +86,7 @@ const ProfileComponent = () => {
   }, []);
 
   const renderItem = ({ item: doc }) => {
-    const fechaRealizacionDate = doc.fechaRealizacion.toDate(); 
+    const fechaRealizacionDate = doc.fecha_realizacion.toDate(); 
     const isFechaRealizacionToday = isToday(fechaRealizacionDate); 
 
     return (
@@ -96,12 +96,12 @@ const ProfileComponent = () => {
             Has creado una rifa con el nombre de{" "}
             <Text style={styles.rafflesCreated__tile}>"{doc.titulo}"</Text>
           </Text>
-          {doc.regla === "personalized" ? (
+          {doc.metodo_eleccion_ganador === "personalized" ? (
             <Button
               title="Elegir Ganador"
               color="#2ecc71"
               onPress={() => {
-                router.replace(`/personalized/${doc.id}`);
+                router.replace(`/Personalized/${doc.id}`);
               }}
               disabled={false}
             />
@@ -167,7 +167,7 @@ const ProfileComponent = () => {
           keyExtractor={(item) => item.id.toString()} 
           renderItem={renderItem2} 
         />
-        <View style={{height:70}}></View>
+        {/* <View style={{height:70}}></View> */}
       </View>
       
     </View>
@@ -177,7 +177,8 @@ const ProfileComponent = () => {
 const styles = StyleSheet.create({
   container: {
     fontFamily: "sans-serif",
-    backgroundColor: "#2ecc71",
+    //backgroundColor: "#2ecc71",
+    backgroundColor: "#2EA671",
     height: height,
   },
   rafflesContainer: {
@@ -185,11 +186,11 @@ const styles = StyleSheet.create({
   
   },
   rafflesContainerList:{
-    height:400,
+    height:250,
     backgroundColor: "#2EA671",
   },
   rafflesCreated: {
-    fontSize: 18,
+    fontSize: 15,
     color: "#fff",
     marginBottom: 15,
     //textAlign:"center"
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   textSection: {
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 0,
     color: "#fff",
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     borderColor:"#fff",
     borderBottomWidth:2,
     borderTopWidth:2,
-    
+    backgroundColor: "#2ecc71",
     
   },
   raffleTitleContainer: {

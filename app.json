@@ -5,10 +5,10 @@
     "version": "1.0.0",
     "scheme": "raffles",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/raffle.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/raffle.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,21 +17,33 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/raffle.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.faxxiv.raffles"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/raffle.png"
     },
     "plugins": [
       "expo-router",
       [
-      "expo-image-picker",
-      {
-        "photosPermission": "Se requiere acceso a tus fotos para subir imágenes."
+        "expo-image-picker",
+        {
+          "photosPermission": "Se requiere acceso a tus fotos para subir imágenes."
+        }
+      ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "0e19185b-e707-4ba2-b6a7-0e262ded09d0"
       }
-    ]
-    ]
+    }
   }
 }
